@@ -1,17 +1,50 @@
 import {ChevronDownIcon} from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import {FC, memo} from 'react';
-
+import { motion } from 'framer-motion';
 import {heroData, SectionId} from '../../data/data';
 import Section from '../Layout/Section';
 import Socials from '../Socials';
 
 const Hero: FC = memo(() => {
   const {imageSrc, name, description} = heroData;
+  
+  const containerVariants = {
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        duration: 1.2,   
+        delay: 0.3,      
+        ease: "easeOut"  
+      }
+    },
+  };
 
+  const slideInLeftVariants = {
+    hidden: {
+      x: -50, 
+      opacity: 0,
+    },
+    visible: {
+      x: 0,  
+      opacity: 1,
+      transition: {
+        type: "spring", 
+        stiffness: 70,
+        damping: 10,
+        when: "beforeChildren",  
+        staggerChildren: 0.2,
+      }
+    },
+  };
+  
   return (
     <Section noPadding sectionId={SectionId.Hero}>
-      <div className="relative flex h-screen w-full items-center justify-center">
+      <motion.div className="relative flex h-screen w-full items-center justify-center"  variants={slideInLeftVariants}
+  initial="hidden"
+  animate="visible">
         <Image
           alt={`${name}-image`}
           className="absolute z-0 h-full w-full object-cover"
@@ -19,15 +52,19 @@ const Hero: FC = memo(() => {
           priority
           src={imageSrc}
         />
-        <div className="z-10  max-w-screen-lg px-4 lg:px-0">
-          <div className="flex flex-col items-center gap-y-6 rounded-xl bg-gray-800/40 p-6 text-center shadow-lg backdrop-blur-sm">
+        <motion.div className="z-10  max-w-screen-lg px-4 lg:px-0"  variants={containerVariants}
+          initial="hidden"
+          animate="visible">
+          <motion.div className="flex flex-col items-center gap-y-6 rounded-xl bg-gray-800/40 p-6 text-center shadow-lg backdrop-blur-sm"  variants={slideInLeftVariants}
+          initial="hidden"
+          animate="visible">
             <h1 className="text-4xl font-bold text-white sm:text-5xl lg:text-7xl">{name}</h1>
             {description}
             <div className="flex gap-x-4 text-neutral-100">
               <Socials />
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
         <div className="absolute inset-x-0 bottom-6 flex justify-center">
           <a
             className="rounded-full bg-white p-1 ring-white ring-offset-2 ring-offset-gray-700/80 focus:outline-none focus:ring-2 sm:p-2"
@@ -35,7 +72,7 @@ const Hero: FC = memo(() => {
             <ChevronDownIcon className="h-5 w-5 bg-transparent sm:h-6 sm:w-6" />
           </a>
         </div>
-      </div>
+      </motion.div>
     </Section>
   );
 });
